@@ -172,11 +172,11 @@ class DateFst(GraphFst):
         the_graph = pynutil.delete("the")
         if input_case == INPUT_CASED:
             the_graph |= pynutil.delete("The").optimize()
+            
+        day_graph = day_graph | the_graph + delete_space + day_graph
 
         graph_dmy = (
-            the_graph
-            + delete_space
-            + day_graph
+            day_graph
             + delete_space
             + pynutil.delete("of")
             + delete_extra_space
