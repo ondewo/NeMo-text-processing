@@ -234,7 +234,7 @@ class InverseNormalizer(Normalizer):
                     probable_email = bool(self.probable_email_pattern.search(text))
             if not probable_email:
                 self.tagger = self.default_tagger
-                if self.normalize_telephone and self.lang is not "en":
+                if self.normalize_telephone and self.lang != "en":
                     text = self.normalize_tuples_before_numbers(
                         text=text,
                         pattern=self.tuple_before_number_regex_pattern,
@@ -351,14 +351,14 @@ class InverseNormalizer(Normalizer):
   
                 if matched_prefix_list:
                     email_username_words = prefix_search_string[matched_prefix_list[-1].regs[0][1]:].split(' ')
-                    prefix_string = prefix_search_string[:matched_prefix_list[-1].regs[0][1]]
+                    prefix_string = prefix_search_string[:matched_prefix_list[-1].regs[0][1]] + " "
 
                 for word in reversed(email_username_words):
-                    if word is not None:
+                    if word is not None and word != "":
                         word = self.word_to_symbol.get(word) if self.word_to_symbol.get(word) is not None else word
                         electronic_text = word + electronic_text
                 
-                return " ".join([prefix_string, electronic_text] + word_splitted_text[len(word_splitted_text)-i+1:])
+                return prefix_string + " ".join([electronic_text] + word_splitted_text[len(word_splitted_text)-i+1:])
             
             elif re.search(pattern=r"\.[\w-]{2,}", string=token['tokens'].get('name') or ""):
                 buffered_token = token['tokens'].get('name')
