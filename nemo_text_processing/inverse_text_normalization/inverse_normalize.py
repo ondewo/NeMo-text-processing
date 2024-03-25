@@ -234,7 +234,7 @@ class InverseNormalizer(Normalizer):
                     probable_email = bool(self.probable_email_pattern.search(text))
             if not probable_email:
                 self.tagger = self.default_tagger
-                if self.normalize_telephone:
+                if self.normalize_telephone and self.lang is not "en":
                     text = self.normalize_tuples_before_numbers(
                         text=text,
                         pattern=self.tuple_before_number_regex_pattern,
