@@ -213,7 +213,7 @@ class InverseNormalizer(Normalizer):
         """
         return self.normalize_list(texts=texts, verbose=verbose)
 
-    def inverse_normalize(self, text: str, verbose: bool) -> str:
+    def inverse_normalize(self, text: str, verbose: bool, telephone_grouping: bool=False) -> str:
         """
         Main function. Inverse normalizes tokens from spoken to written form
             e.g. twelve kilograms -> 12 kg
@@ -243,6 +243,12 @@ class InverseNormalizer(Normalizer):
                 inverse_normalized = self.normalize(text=text, verbose=verbose)
                 if self.normalize_telephone:
                     inverse_normalized = re.sub(self.symbol_to_word['+'][0] + r"\s+(\d)", r"+\1", inverse_normalized)
+                    if not telephone_grouping:
+                        inverse_normalized = re.sub(
+                            pattern=r'(\d[\s-]?)+\d', 
+                            repl=lambda m: re.sub(r'[\s-]', '', m.group(0)), 
+                            string=inverse_normalized
+                        )
             else:
                 self.tagger = self.numbers_tagger
                 numbers_inverse_normalized = self.normalize(text=text, verbose=verbose)
