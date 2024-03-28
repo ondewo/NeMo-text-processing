@@ -52,9 +52,16 @@ class CardinalFst(GraphFst):
         graph_hundred = pynini.cross("hundred", "")
         
         graph_and = delete_space + pynutil.delete("and") + delete_space
-        graph_digit_with_and = graph_and + graph_digit
-        graph_teen_with_and = graph_and + graph_teen
-        graph_ties_with_and = graph_and + graph_ties
+        graph_digit_with_and = graph_digit | graph_and + graph_digit
+        graph_teen_with_and = graph_teen | graph_and + graph_teen
+        graph_ties_with_and = graph_ties | graph_and + graph_ties
+        graph_thousand_with_and = self.delete_word("thousand") | self.delete_word("thousand") + graph_and
+        graph_million_with_and = self.delete_word("million") | self.delete_word("million") + graph_and
+        graph_billion_with_and = self.delete_word("billion") |self.delete_word("billion") + graph_and
+        graph_trillion_with_and = self.delete_word("trillion") | self.delete_word("trillion") + graph_and
+        graph_quadrillion_with_and = self.delete_word("quadrillion") | self.delete_word("quadrillion") + graph_and
+        graph_quintillion_with_and = self.delete_word("quintillion") | self.delete_word("quintillion") + graph_and
+        graph_sextillion_with_and = self.delete_word("sextillion") | self.delete_word("sextillion") + graph_and
 
         graph_hundred_component = pynini.union(
             (graph_digit | pynini.string_map([("a", "1")]) | pynutil.insert("1")) + delete_space + graph_hundred, 
@@ -62,9 +69,9 @@ class CardinalFst(GraphFst):
         )
         graph_hundred_component += delete_space
         graph_hundred_component += pynini.union(
-            graph_teen | graph_teen_with_and | pynutil.insert("00"),
-            (graph_ties | graph_ties_with_and) + delete_space + (graph_digit | pynutil.insert("0")),
-            pynutil.insert("0") + (graph_digit | graph_digit_with_and)
+            graph_teen_with_and | pynutil.insert("00"),
+            graph_ties_with_and + delete_space + (graph_digit | pynutil.insert("0")),
+            pynutil.insert("0") + graph_digit_with_and
         )
 
         graph_hundred_component_at_least_one_none_zero_digit = graph_hundred_component @ (
@@ -78,9 +85,9 @@ class CardinalFst(GraphFst):
         graph_hundred_as_thousand = pynini.union(graph_teen, graph_ties + delete_space + graph_digit)
         graph_hundred_as_thousand += delete_space + graph_hundred
         graph_hundred_as_thousand += delete_space + pynini.union(
-            graph_teen | graph_teen_with_and | pynutil.insert("00"),
-            (graph_ties | graph_ties_with_and) + delete_space + (graph_digit | pynutil.insert("0")),
-            pynutil.insert("0") + (graph_digit | graph_digit_with_and)
+            graph_teen_with_and | pynutil.insert("00"),
+            graph_ties_with_and + delete_space + (graph_digit | pynutil.insert("0")),
+            pynutil.insert("0") + graph_digit_with_and
         )
 
         graph_hundreds = graph_hundred_component | graph_hundred_as_thousand
@@ -96,73 +103,66 @@ class CardinalFst(GraphFst):
         self.graph_ties_component_at_least_one_none_zero_digit = graph_ties_component_at_least_one_none_zero_digit
 
         # %%% International numeric format
-        graph_thousand_with_and = self.delete_word("thousand") + graph_and
         graph_thousands = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("thousand") | graph_thousand_with_and),
+            ) + delete_space + graph_thousand_with_and,
             pynutil.insert("000", weight=0.1),
         )
         
-        graph_million_with_and = self.delete_word("million") + graph_and
         graph_million = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("million") | graph_million_with_and),
+            ) + delete_space + graph_million_with_and,
             pynutil.insert("000", weight=0.1),
         )
         
-        graph_billion_with_and = self.delete_word("billion") + graph_and
         graph_billion = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("billion") | graph_billion_with_and),
+            ) + delete_space + graph_billion_with_and,
             pynutil.insert("000", weight=0.1),
         )
         
-        graph_trillion_with_and = self.delete_word("trillion") + graph_and
         graph_trillion = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("trillion") | graph_trillion_with_and),
+            ) + delete_space + graph_trillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
         
-        graph_quadrillion_with_and = self.delete_word("quadrillion") + graph_and
         graph_quadrillion = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("quadrillion") | graph_quadrillion_with_and),
+            ) + delete_space + graph_quadrillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
         
-        graph_quintillion_with_and = self.delete_word("quintillion") + graph_and
         graph_quintillion = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("quintillion") | graph_quintillion_with_and),
+            ) + delete_space + graph_quintillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
         
-        graph_sextillion_with_and = self.delete_word("sextillion") + graph_and
         graph_sextillion = pynini.union(
             (
                 graph_hundred_component_at_least_one_none_zero_digit 
                 | pynini.string_map([("a", "1")]) 
                 | pynutil.insert("1")
-            ) + delete_space + (self.delete_word("sextillion") | graph_sextillion_with_and),
+            ) + delete_space + graph_sextillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
         # %%%
