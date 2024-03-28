@@ -245,7 +245,7 @@ class InverseNormalizer(Normalizer):
                     inverse_normalized = re.sub(self.symbol_to_word['+'][0] + r"\s+(\d)", r"+\1", inverse_normalized)
                     if not telephone_grouping:
                         inverse_normalized = re.sub(
-                            pattern=r'(\d[\s-]?)+\d', 
+                            pattern=r'(\d{2,5}[\s-]){2,}\d', 
                             repl=lambda m: re.sub(r'[\s-]', '', m.group(0)), 
                             string=inverse_normalized
                         )
