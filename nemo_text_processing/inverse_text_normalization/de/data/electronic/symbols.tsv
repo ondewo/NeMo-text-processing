@@ -18,6 +18,7 @@ $	dollar zeichen
 @	at
 @	at zeichen
 @	äffchen
+@	affchen
 @	klammer affe
 @	klammeraffen zeichen
 @	klammer affen zeichen
@@ -31,11 +32,13 @@ $	dollar zeichen
 '	hochkomma
 "	anführungszeichen
 "	gänsefüßchen
+"	gansefußchen
 *	stern
 *	asterisk
 +	plus
 /	slash
 /	schrägstrich
+/	schragstrich
 =	gleichheitszeichen
 =	istgleich
 ?	fragezeichen
