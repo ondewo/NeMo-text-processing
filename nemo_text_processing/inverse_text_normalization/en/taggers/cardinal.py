@@ -41,7 +41,7 @@ class CardinalFst(GraphFst):
         input_case: accepting either "lower_cased" or "cased" input.
     """
 
-    def __init__(self, input_case: str = INPUT_LOWER_CASED):
+    def __init__(self, input_case: str = INPUT_LOWER_CASED, excepted_single_digit: bool = False):
         super().__init__(name="cardinal", kind="classify")
         self.input_case = input_case
         graph_zero = pynini.string_file(get_abs_path("data/numbers/zero.tsv"))
@@ -50,12 +50,28 @@ class CardinalFst(GraphFst):
         graph_teen = pynini.string_file(get_abs_path("data/numbers/teen.tsv"))
         self.graph_two_digit = graph_teen | ((graph_ties) + delete_space + (graph_digit | pynutil.insert("0")))
         graph_hundred = pynini.cross("hundred", "")
+        
+        graph_and = delete_space + pynutil.delete("and") + delete_space
+        graph_digit_with_and = graph_digit | graph_and + graph_digit
+        graph_teen_with_and = graph_teen | graph_and + graph_teen
+        graph_ties_with_and = graph_ties | graph_and + graph_ties
+        graph_thousand_with_and = self.delete_word("thousand") | self.delete_word("thousand") + graph_and
+        graph_million_with_and = self.delete_word("million") | self.delete_word("million") + graph_and
+        graph_billion_with_and = self.delete_word("billion") |self.delete_word("billion") + graph_and
+        graph_trillion_with_and = self.delete_word("trillion") | self.delete_word("trillion") + graph_and
+        graph_quadrillion_with_and = self.delete_word("quadrillion") | self.delete_word("quadrillion") + graph_and
+        graph_quintillion_with_and = self.delete_word("quintillion") | self.delete_word("quintillion") + graph_and
+        graph_sextillion_with_and = self.delete_word("sextillion") | self.delete_word("sextillion") + graph_and
 
-        graph_hundred_component = pynini.union(graph_digit + delete_space + graph_hundred, pynutil.insert("0"))
+        graph_hundred_component = pynini.union(
+            (graph_digit | pynini.string_map([("a", "1")]) | pynutil.insert("1")) + delete_space + graph_hundred, 
+            pynutil.insert("0"),
+        )
         graph_hundred_component += delete_space
         graph_hundred_component += pynini.union(
-            graph_teen | pynutil.insert("00"),
-            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")),
+            graph_teen_with_and | pynutil.insert("00"),
+            graph_ties_with_and + delete_space + (graph_digit | pynutil.insert("0")),
+            pynutil.insert("0") + graph_digit_with_and
         )
 
         graph_hundred_component_at_least_one_none_zero_digit = graph_hundred_component @ (
@@ -69,8 +85,9 @@ class CardinalFst(GraphFst):
         graph_hundred_as_thousand = pynini.union(graph_teen, graph_ties + delete_space + graph_digit)
         graph_hundred_as_thousand += delete_space + graph_hundred
         graph_hundred_as_thousand += delete_space + pynini.union(
-            graph_teen | pynutil.insert("00"),
-            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")),
+            graph_teen_with_and | pynutil.insert("00"),
+            graph_ties_with_and + delete_space + (graph_digit | pynutil.insert("0")),
+            pynutil.insert("0") + graph_digit_with_and
         )
 
         graph_hundreds = graph_hundred_component | graph_hundred_as_thousand
@@ -87,32 +104,65 @@ class CardinalFst(GraphFst):
 
         # %%% International numeric format
         graph_thousands = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("thousand"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_thousand_with_and,
             pynutil.insert("000", weight=0.1),
         )
-
+        
         graph_million = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("million"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_million_with_and,
             pynutil.insert("000", weight=0.1),
         )
+        
         graph_billion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("billion"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_billion_with_and,
             pynutil.insert("000", weight=0.1),
         )
+        
         graph_trillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("trillion"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_trillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
+        
         graph_quadrillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("quadrillion"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_quadrillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
+        
         graph_quintillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("quintillion"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_quintillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
+        
         graph_sextillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + self.delete_word("sextillion"),
+            (
+                graph_hundred_component_at_least_one_none_zero_digit 
+                | pynini.string_map([("a", "1")]) 
+                | pynutil.insert("1")
+            ) + delete_space + graph_sextillion_with_and,
             pynutil.insert("000", weight=0.1),
         )
         # %%%
@@ -218,20 +268,24 @@ class CardinalFst(GraphFst):
         if input_case == INPUT_CASED:
             labels_exception += [x.capitalize() for x in labels_exception]
 
-        graph_exception = pynini.union(*labels_exception).optimize()
-
-        graph = (
-            pynini.cdrewrite(pynutil.delete("and"), NEMO_SPACE, NEMO_SPACE, NEMO_SIGMA)
-            @ (NEMO_ALPHA + NEMO_SIGMA)
-            @ graph
-        ).optimize()
+        # graph = (
+        #     pynini.cdrewrite(pynutil.delete("and"), NEMO_SPACE, NEMO_SPACE, NEMO_SIGMA)
+        #     @ (NEMO_ALPHA + NEMO_SIGMA)
+        #     @ graph
+        # ).optimize()
 
         if input_case == INPUT_CASED:
             graph = capitalized_input_graph(graph)
 
         self.graph_no_exception = graph
 
-        self.graph = (pynini.project(graph, "input") - graph_exception.arcsort()) @ graph
+        if excepted_single_digit:
+            graph_exception = pynini.union(*labels_exception).optimize()
+            # numbers between zero to twelve would not be normalized to alphabetic form to prevent cases "one of us"
+            self.graph = (pynini.project(graph, "input") - graph_exception.arcsort()) @ graph
+        else:
+            # disable exception to normalize numbers between 0 and 13
+            self.graph = self.graph_no_exception
 
         optional_minus_graph = pynini.closure(
             pynutil.insert("negative: ") + pynini.cross(MINUS, "\"-\"") + NEMO_SPACE, 0, 1

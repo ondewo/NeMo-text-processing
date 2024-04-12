@@ -158,7 +158,7 @@ class DateFst(GraphFst):
 
         month_graph = pynutil.insert("month: \"") + month_graph + pynutil.insert("\"")
 
-        day_graph = pynutil.insert("day: \"") + pynutil.add_weight(ordinal_graph, -0.7) + pynutil.insert("\"")
+        day_graph = pynutil.insert("day: \"") + pynutil.add_weight(ordinal_graph, -0.7) + pynutil.insert(".\"")
         graph_year = (
             delete_extra_space
             + pynutil.insert("year: \"")
@@ -172,13 +172,12 @@ class DateFst(GraphFst):
         the_graph = pynutil.delete("the")
         if input_case == INPUT_CASED:
             the_graph |= pynutil.delete("The").optimize()
-
+            
+        day_graph |=  the_graph + delete_space + day_graph
+        day_graph |= day_graph + delete_space + pynutil.delete("of")
+        
         graph_dmy = (
-            the_graph
-            + delete_space
-            + day_graph
-            + delete_space
-            + pynutil.delete("of")
+            day_graph 
             + delete_extra_space
             + month_graph
             + optional_graph_year
