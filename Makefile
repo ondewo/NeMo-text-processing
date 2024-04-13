@@ -28,12 +28,11 @@ CURRENT_RELEASE_NOTES=`cat RELEASE.md \
 GH_REPO="https://github.com/ondewo/NeMo-text-processing"
 DEVOPS_ACCOUNT_GIT="ondewo-devops-accounts"
 DEVOPS_ACCOUNT_DIR="./${DEVOPS_ACCOUNT_GIT}"
-IMAGE_UTILS_NAME=NeMo-text-processing-utils:${RELEASE_VERSION}
+IMAGE_UTILS_NAME=nemo-text-processing-utils:${RELEASE_VERSION}
 .DEFAULT_GOAL := help
 
 ########################################################
 #       ONDEWO Standard Make Targets
-########################################################
 
 setup_developer_environment_locally: install_python_requirements install_precommit_hooks ## Sets up local development environment !! Forcefully closes current terminal
 
