@@ -30,6 +30,7 @@ def get_quantity(decimal: "pynini.FstLike", cardinal_up_to_hundred: "pynini.FstL
         cardinal_up_to_hundred: cardinal FST
     """
     numbers = cardinal_up_to_hundred
+    quantities = pynini.string_file(get_abs_path("data/numbers/quantities.tsv"))
 
     res = (
         pynutil.insert('integer_part: "')
