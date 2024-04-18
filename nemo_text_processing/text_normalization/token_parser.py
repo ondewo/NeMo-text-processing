@@ -41,7 +41,7 @@ class TokenParser:
         self.char = text[0]  # cannot handle empty string
         self.index = 0
 
-    def parse(self) -> List[dict]:
+    def parse(self) -> List[OrderedDict]:
         """
         Main function. Implements grammar:
         A -> space F space F space F ... space
@@ -56,7 +56,7 @@ class TokenParser:
             l.append(token)
         return l
 
-    def parse_token(self) -> Dict[str, Union[str, dict]]:
+    def parse_token(self) -> OrderedDict[str, Union[str, OrderedDict]]:
         """
         Implements grammar:
         F-> no_space KG no_space
@@ -78,7 +78,7 @@ class TokenParser:
         d[key] = value
         return d
 
-    def parse_token_value(self) -> Union[str, dict]:
+    def parse_token_value(self) -> Union[str, OrderedDict]:
         """
         Implements grammar:
         G-> no_space :"VALUE" no_space | no_space {A} no_space
