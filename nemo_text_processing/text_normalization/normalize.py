@@ -247,7 +247,7 @@ class Normalizer:
         return normalized_texts
 
     def _estimate_number_of_permutations_in_nested_dict(
-        self, token_group: Dict[str, Union[OrderedDict, str, bool]]
+        self, token_group: OrderedDict[str, Union[OrderedDict, str, bool]]
     ) -> int:
         num_perms = 1
         for k, inner in token_group.items():
@@ -256,7 +256,7 @@ class Normalizer:
         num_perms *= factorial(len(token_group))
         return num_perms
 
-    def _split_tokens_to_reduce_number_of_permutations(self, tokens: List[dict]) -> List[List[dict]]:
+    def _split_tokens_to_reduce_number_of_permutations(self, tokens: List[OrderedDict]) -> List[List[OrderedDict]]:
         """
         Splits a sequence of tokens in a smaller sequences of tokens in a way that maximum number of composite
         tokens permutations does not exceed ``max_number_of_permutations_per_split``.
@@ -343,9 +343,9 @@ class Normalizer:
         logger.debug(tagged_text)
 
         self.parser(tagged_text)
-        tokens = self.parser.parse()
-        self.tokens = tokens
-        split_tokens = self._split_tokens_to_reduce_number_of_permutations(tokens)
+        tokens: List[OrderedDict] = self.parser.parse()
+        self.tokens: List[OrderedDict] = tokens
+        split_tokens: List[List[OrderedDict]] = self._split_tokens_to_reduce_number_of_permutations(tokens)
         output = ""
         for s in split_tokens:
             try:
@@ -581,7 +581,7 @@ class Normalizer:
             l.extend(subl)
         return l
 
-    def generate_permutations(self, tokens: List[dict]):
+    def generate_permutations(self, tokens: List[OrderedDict]):
         """
         Generates permutations of string serializations of list of dictionaries
 
@@ -591,7 +591,7 @@ class Normalizer:
         Returns string serialization of list of dictionaries
         """
 
-        def _helper(prefix: str, token_list: List[dict], idx: int):
+        def _helper(prefix: str, token_list: List[OrderedDict], idx: int):
             """
             Generates permutations of string serializations of given dictionary
 
