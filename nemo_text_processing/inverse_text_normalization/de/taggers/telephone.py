@@ -21,16 +21,11 @@ from nemo_text_processing.text_normalization.en.graph_utils import GraphFst, del
 
 class TelephoneFst(GraphFst):
     """
-    Finite state transducer for classifying telephone numbers, e.g. 
-        plus vier vier eins eins eins zwei drei vier eins zwei drei vier -> { number_part: "+44-111-234-1234" }.
-        If 10 digits are spoken, they are grouped as 3+3+4 (eg. 123-456-7890).
-        If 9 digits are spoken, they are grouped as 3+3+3 (eg. 123-456-789).
-        If 8 digits are spoken, they are grouped as 4+4 (eg. 1234-5678).
-        In german, digits are generally spoken individually, or rarely as 2-digit numbers,
-        eg. "one twenty three" = "123",
-            "twelve thirty four" = "1234".
+    Finite state transducer for classifying telephone numbers, e.g.
+        null vier eins eins eins zwei drei vier eins zwei drei vier -> tokens { name: "(0411) 1234-1234" }
 
-        (we ignore more complicated cases such as "three hundred and two" or "three nines").
+    Args:
+        tn_cardinal_tagger: TN Cardinal Tagger
     """
 
     def __init__(self):
