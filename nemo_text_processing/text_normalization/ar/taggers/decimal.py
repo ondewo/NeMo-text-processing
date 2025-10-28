@@ -19,36 +19,10 @@ from nemo_text_processing.text_normalization.ar.graph_utils import NEMO_DIGIT, N
 from nemo_text_processing.text_normalization.ar.utils import get_abs_path
 
 
-def get_quantity(decimal: "pynini.FstLike", cardinal_up_to_hundred: "pynini.FstLike") -> "pynini.FstLike":
-    """
-    Returns FST that transforms either a cardinal or decimal followed by a quantity into a numeral,
-    e.g.  5 مليون -> integer_part: "خمسة" quantity: "مليون"
-    e.g. 5.4 مليون -> integer_part: "خمسة" fractional_part: "اربعة من عشرة" quantity: "مليون"
-
-    Args: 
-        decimal: decimal FST
-        cardinal_up_to_hundred: cardinal FST
-    """
-    numbers = cardinal_up_to_hundred
-    quantities = pynini.string_file(get_abs_path("data/numbers/quantities.tsv"))
-
-    res = (
-        pynutil.insert('integer_part: "')
-        + numbers
-        + pynutil.insert('"')
-        + pynini.accep(" ")
-        + pynutil.insert('quantity: "')
-        + quantities
-        + pynutil.insert('"')
-    )
-    res |= decimal + pynini.accep(" ") + pynutil.insert('quantity: "') + quantities + pynutil.insert('"')
-    return res
-
-
 class DecimalFst(GraphFst):
     """
-    Finite state transducer for classifying decimal, e.g. 
-    321.7 --> ثلاث مئة وواحد وعشرون وسبعة من عشرة 
+    Finite state transducer for classifying decimal, e.g.
+    321.7 --> ثلاث مئة وواحد وعشرون وسبعة من عشرة
     -321.7  -> decimal { negative: "true" integer_part: "321"  fractional_part: ".7" }
     cardinal: CardinalFst
     """

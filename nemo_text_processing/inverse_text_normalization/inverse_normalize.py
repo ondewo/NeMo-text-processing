@@ -126,9 +126,19 @@ class InverseNormalizer(Normalizer):
             from nemo_text_processing.inverse_text_normalization.mr.verbalizers.verbalize_final import (
                 VerbalizeFinalFst,
             )
+        elif lang == 'hi':  # Hindi
+            from nemo_text_processing.inverse_text_normalization.hi.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.inverse_text_normalization.hi.verbalizers.verbalize_final import (
+                VerbalizeFinalFst,
+            )
         elif lang == 'hy':
             from nemo_text_processing.inverse_text_normalization.hy.taggers.tokenize_and_classify import ClassifyFst
             from nemo_text_processing.inverse_text_normalization.hy.verbalizers.verbalize_final import (
+                VerbalizeFinalFst,
+            )
+        elif lang == 'ja':  # Japanese
+            from nemo_text_processing.inverse_text_normalization.ja.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.inverse_text_normalization.ja.verbalizers.verbalize_final import (
                 VerbalizeFinalFst,
             )
         
@@ -184,7 +194,7 @@ class InverseNormalizer(Normalizer):
                 overwrite_cache=overwrite_cache, 
                 input_case=input_case,
             )
-            
+
         self.verbalizer = VerbalizeFinalFst()
         self.parser = TokenParser()
         self.lang = lang
@@ -447,7 +457,7 @@ def parse_args():
     parser.add_argument(
         "--language",
         help="language",
-        choices=['en', 'de', 'es', 'pt', 'ru', 'fr', 'sv', 'vi', 'ar', 'es_en', 'zh', 'hy', 'mr'],
+        choices=['en', 'de', 'es', 'pt', 'ru', 'fr', 'sv', 'vi', 'ar', 'es_en', 'zh', 'hi', 'hy', 'mr', 'ja'],
         default="en",
         type=str,
     )

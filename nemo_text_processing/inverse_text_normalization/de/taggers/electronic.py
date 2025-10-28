@@ -30,8 +30,8 @@ from nemo_text_processing.text_normalization.en.utils import load_labels
 
 class ElectronicFst(GraphFst):
     """
-    Finite state transducer for classifying electronic: as URLs, email addresses, etc.
-        e.g. c d f eins at a b c punkt e d u -> tokens { electronic { username: "cdf1" domain: "abc.edu" } }
+    Finite state transducer for classifying electronic: email addresses, etc.
+        e.g. c d f eins at a b c punkt e d u -> tokens { name: "cdf1.abc.edu" }
 
     Args:
         input_case: accepting either "lower_cased" or "cased" input.
